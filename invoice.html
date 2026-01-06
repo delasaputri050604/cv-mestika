@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice — CV Mestika Lestari</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+}
+
+/* HEADER */
+header {
+  background: #2e7d32;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+/* BUTTON */
+.print-btn {
+  margin: 15px 0;
+  padding: 10px 16px;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* CONTAINER */
+.container {
+  width: 95%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* CARD */
+.card {
+  background: white;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.1);
+}
+
+/* FORM */
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+  gap: 15px;
+}
+
+input, select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button.submit-btn {
+  grid-column: span 2;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  border: 1px solid #000;
+  padding: 8px;
+  font-size: 13px;
+}
+
+th {
+  background: #e8f5e9;
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  margin: 30px 0;
+  color: #777;
+}
+
+/* ===== PRINT MODE ===== */
+@media print {
+
+  body {
+    background: white;
+  }
+
+  header,
+  .no-print,
+  form,
+  .print-btn,
+  .footer {
+    display: none !important;
+  }
+
+  .card {
+    box-shadow: none;
+    border: none;
+  }
+
+  table {
+    font-size: 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>INVOICE</h1>
+  <p>CV Mestika Lestari</p>
+</header>
+
+<div class="container">
+
+  <!-- PRINT BUTTON -->
+  <button onclick="window.print()" class="print-btn no-print">
+    🖨️ Print Disini
+  </button>
+
+  <!-- FORM INPUT (TIDAK IKUT PRINT) -->
+  <div class="card no-print">
+    <h2>Input Invoice</h2>
+    <form id="invoiceForm">
+      <input id="nmr_invoice" placeholder="Nomor Invoice" required>
+      <input id="tgl_invoice" placeholder="Tanggal Invoice" required>
+      <input id="no_po_customer" placeholder="No PO Customer">
+      <input id="nama_customer" placeholder="Nama Customer" required>
+      <input id="nama_barang" placeholder="Nama Barang" required>
+      <input id="banyaknya" placeholder="Banyaknya" required>
+      <input id="harga_barang" type="number" placeholder="Harga Barang" required>
+
+      <select id="status">
+        <option value="kredit">Kredit</option>
+        <option value="lunas">Lunas</option>
+      </select>
+
+      <button class="submit-btn" type="submit">💾 SIMPAN INVOICE</button>
+    </form>
+  </div>
+
+  <!-- DATA TABLE (IKUT PRINT) -->
+  <div class="card">
+    <h2>Data Invoice</h2>
+    <table>
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  © CV Mestika Lestari
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzE-YZQKET-UeZd43r194MEnEyysUQvohtQRx18Iee389UCCuxrQSO7FQi_iTeE7-uk/exec";
+
+// LOAD DATA
+async function loadInvoice() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+
+  if (!data.length) return;
+
+  thead.innerHTML =
+    "<tr>" +
+    Object.keys(data[0]).map(h => `<th>${h}</th>`).join("") +
+    "</tr>";
+
+  tbody.innerHTML = "";
+
+  data.forEach(row => {
+    tbody.innerHTML +=
+      "<tr>" +
+      Object.values(row).map(v => `<td>${v ?? ""}</td>`).join("") +
+      "</tr>";
+  });
+}
+
+// SUBMIT DATA
+invoiceForm.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const payload = {
+    "NMR INVOICE": nmr_invoice.value,
+    "TGL INVOICE": tgl_invoice.value,
+    "NO PO_CUSTOMER": no_po_customer.value,
+    "NAMA CUSTOMER": nama_customer.value,
+    "NAMA BARANG": nama_barang.value,
+    "BANYAKNYA": banyaknya.value,
+    "HARGA BARANG": Number(harga_barang.value),
+    "STATUS": status.value
+  };
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const result = await res.json();
+
+  if (result.status === "success") {
+    alert("✅ Invoice berhasil disimpan");
+    invoiceForm.reset();
+    loadInvoice();
+  } else {
+    alert("❌ Gagal menyimpan");
+  }
+});
+
+loadInvoice();
+</script>
+
+</body>
+</html>

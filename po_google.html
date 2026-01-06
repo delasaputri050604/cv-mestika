@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purchase Order - CV Mestika Lestari</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  margin:0;
+  background:#f4f6f8;
+  color:#000;
+}
+
+/* ===== HEADER WEB ===== */
+header{
+  background:#2e7d32;
+  color:#fff;
+  padding:18px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+}
+
+/* ===== CONTAINER ===== */
+.container{
+  width:95%;
+  margin:20px auto;
+}
+
+/* ===== FORM ===== */
+form{
+  background:#fff;
+  padding:15px;
+  border-radius:8px;
+  margin-bottom:20px;
+}
+
+.form-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.form-grid input{
+  flex:1 1 180px;
+  padding:8px;
+}
+
+button{
+  margin-top:15px;
+  padding:10px 25px;
+  background:#2e7d32;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+/* ===== PRINT BUTTON ===== */
+.print-area{
+  text-align:right;
+  margin-bottom:10px;
+}
+
+.print-btn{
+  padding:8px 18px;
+  background:#2e7d32;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  font-size:14px;
+}
+
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+}
+
+th{
+  background:#c8e6c9;
+  text-align:center;
+}
+
+/* ===== PRINT MODE ===== */
+@media print{
+
+  @page{
+    size:A4 portrait;
+    margin:15mm;
+  }
+
+  body{
+    background:#fff;
+  }
+
+  header,
+  form,
+  .print-area{
+    display:none !important;
+  }
+
+  table{
+    font-size:11px;
+  }
+
+  th,td{
+    border:1px solid #000 !important;
+    padding:6px;
+  }
+
+  th{
+    background:#fff !important;
+    font-weight:bold;
+  }
+
+  tr{
+    page-break-inside:avoid;
+  }
+
+  .print-title{
+    display:block;
+    text-align:center;
+    margin-bottom:10px;
+  }
+}
+
+/* ===== PRINT TITLE ===== */
+.print-title{
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>CV MESTIKA LESTARI — PURCHASE ORDER</header>
+
+<div class="container">
+
+<form onsubmit="savePO(); return false;">
+  <h3>Tambah Purchase Order</h3>
+
+  <div class="form-grid">
+    <input id="no_po" placeholder="No PO" required>
+    <input id="tanggal_po" type="date" required>
+    <input id="supplier" placeholder="Supplier" required>
+    <input id="barang" placeholder="Barang">
+    <input id="pack" placeholder="Pack">
+    <input id="qty" type="number" placeholder="Qty">
+    <input id="harga" type="number" placeholder="Harga">
+    <input id="status" placeholder="Status">
+  </div>
+
+  <button>Simpan</button>
+</form>
+
+<div class="print-area">
+  <button class="print-btn" onclick="window.print()">🖨️ Print Disini</button>
+</div>
+
+<div class="print-title">
+  <h2>PURCHASE ORDER</h2>
+  <div>CV Mestika Lestari</div>
+  <div id="printDate"></div>
+</div>
+
+<table id="poTable"></table>
+
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwyt_FjGdWvrZJLldoKY0rEg-BToGCUk8XkhO73YSke-FLMy5D7PJ7Fxug1beX78kgU5g/exec";
+
+async function loadPO(){
+  const res = await fetch(API_URL);
+  const data = await res.json();
+
+  if(!data.length){
+    poTable.innerHTML = "<tr><td>Belum ada data</td></tr>";
+    return;
+  }
+
+  let html = "<tr>";
+  Object.keys(data[0]).forEach(h=> html += `<th>${h}</th>`);
+  html += "</tr>";
+
+  data.forEach(row=>{
+    html += "<tr>";
+    Object.values(row).forEach(v=> html += `<td>${v ?? ""}</td>`);
+    html += "</tr>";
+  });
+
+  poTable.innerHTML = html;
+}
+
+async function savePO(){
+  const payload = {
+    "NO PO": no_po.value,
+    "TANGGAL PO": tanggal_po.value,
+    "SUPPLIER": supplier.value,
+    "BARANG": barang.value,
+    "PACK": pack.value,
+    "QTY": qty.value,
+    "HARGA": harga.value,
+    "STATUS": status.value
+  };
+
+  await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+
+  document.querySelector("form").reset();
+  loadPO();
+}
+
+document.getElementById("printDate").innerText =
+  "Tanggal Cetak: " + new Date().toLocaleDateString("id-ID");
+
+loadPO();
+</script>
+
+</body>
+</html>

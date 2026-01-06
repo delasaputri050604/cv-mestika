@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Barang — CV Mestika Lestari</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f4f6f8;
+  padding: 0;
+  min-height: 100vh;
+}
+
+header {
+  background: #1b5e20;
+  color: white;
+  padding: 18px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.container {
+  width: 95%;
+  max-width: 1100px;
+  margin: 20px auto;
+}
+
+/* FORM */
+.card {
+  background: white;
+  padding: 18px 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  color: #2e7d32;
+  margin-top: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+}
+
+button {
+  padding: 10px 16px;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  background: #145a1f;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+th {
+  background: #c8e6c9;
+  color: #000;
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background: #f1f8e9;
+}
+
+.status {
+  font-weight: bold;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.footer {
+  text-align: center;
+  margin: 20px 0;
+  color: #777;
+  font-size: 13px;
+}
+</style>
+
+</head>
+<body>
+
+<header>MASTER BARANG — CV Mestika Lestari</header>
+
+<div class="container">
+
+  <!-- FORM -->
+  <div class="card">
+    <h2>Input Barang</h2>
+    <div class="form-grid">
+      <input id="kode_barang" placeholder="Kode Barang">
+      <input id="nama_barang" placeholder="Nama Barang">
+      <input id="jenis_kemasan" placeholder="Jenis Kemasan">
+      <input id="isi_perkemasan" placeholder="Isi Perkemasan">
+      <input id="satuan" placeholder="Satuan">
+      <input id="bahan_aktif" placeholder="Bahan Aktif">
+    </div>
+    <button onclick="simpanMaster()">💾 Simpan Data</button>
+    <div id="status"></div>
+  </div>
+
+  <!-- TABEL -->
+  <div class="card">
+    <h2>Daftar Master Barang</h2>
+    <table>
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  © CV Mestika Lestari
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbw6gQrMF8D0v8kEBhMFN1F6X9kIu-MSI7D5zQb1zr2RZQwZReJqmUMxR_OPctPyTwYN/exec";
+
+// LOAD DATA
+async function loadMaster() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    if (!data.length) {
+      // jika sheet kosong
+      document.getElementById("thead").innerHTML = "";
+      document.getElementById("tbody").innerHTML = "<tr><td colspan='7' style='text-align:center'>Belum ada data</td></tr>";
+      return;
+    }
+
+    // bikin header otomatis
+    const headers = Object.keys(data[0]);
+    document.getElementById("thead").innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr>";
+
+    // isi tabel
+    let html = "";
+    data.forEach(row => {
+      html += "<tr>";
+      headers.forEach(h => {
+        html += `<td>${row[h] ?? ""}</td>`;
+      });
+      html += "</tr>";
+    });
+    document.getElementById("tbody").innerHTML = html;
+
+  } catch (err) {
+    console.error("Load error:", err);
+  }
+}
+
+// SIMPAN DATA
+async function simpanMaster() {
+  const payload = {
+    "KODE BARANG": kode_barang.value,
+    "NAMA BARANG": nama_barang.value,
+    "JENIS KEMASAN": jenis_kemasan.value,
+    "ISI PERKEMASAN": isi_perkemasan.value,
+    "SATUAN": satuan.value,
+    "BAHAN AKTIF": bahan_aktif.value
+  };
+
+  document.getElementById("status").innerText = "Menyimpan...";
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (result.status === "success") {
+      document.getElementById("status").innerText = "✅ Berhasil disimpan!";
+      loadMaster();
+      // reset form
+      kode_barang.value = "";
+      nama_barang.value = "";
+      jenis_kemasan.value = "";
+      isi_perkemasan.value = "";
+      satuan.value = "";
+      bahan_aktif.value = "";
+    } else {
+      document.getElementById("status").innerText = "❌ Gagal simpan";
+    }
+  } catch (e) {
+    document.getElementById("status").innerText = "❌ Server tidak merespon";
+    console.error("simpan error:", e);
+  }
+}
+
+// load awal
+loadMaster();
+</script>
+
+</body>
+</html>

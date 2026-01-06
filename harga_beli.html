@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harga Beli Supplier | CV Mestika Lestari</title>
+
+<style>
+:root{
+  --green:#2e7d32;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+body{
+  margin:0;
+  background:#f4f6f8;
+  color:#111;
+}
+
+/* ===== HEADER ===== */
+header{
+  background:linear-gradient(135deg,#1b5e20,#2e7d32);
+  color:#fff;
+  padding:20px 30px;
+  font-size:22px;
+  font-weight:bold;
+}
+
+/* ===== CONTAINER ===== */
+.container{
+  padding:25px;
+  max-width:1200px;
+  margin:auto;
+}
+
+/* ===== CARD ===== */
+.card{
+  background:#fff;
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 6px 15px rgba(0,0,0,.1);
+}
+
+/* ===== TITLE ===== */
+.card h2{
+  margin:0 0 15px;
+  color:var(--green);
+}
+
+/* ===== SEARCH ===== */
+.search-box{
+  margin-bottom:15px;
+}
+
+.search-box input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+/* ===== PRINT BUTTON ===== */
+.print-area{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:10px;
+}
+
+.print-btn{
+  padding:10px 16px;
+  background:var(--green);
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* ===== TABLE ===== */
+.table-wrapper{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+}
+
+th{
+  background:#e8f5e9;
+  text-align:center;
+}
+
+td.price{
+  text-align:right;
+  font-weight:bold;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  text-align:center;
+  margin-top:25px;
+  font-size:13px;
+  color:#777;
+}
+
+/* ===== PRINT MODE ===== */
+@media print{
+
+  @page{
+    size:A4 portrait;
+    margin:12mm;
+  }
+
+  body{
+    background:#fff;
+  }
+
+  header,
+  .search-box,
+  .print-area,
+  .footer{
+    display:none !important;
+  }
+
+  .card{
+    box-shadow:none !important;
+    padding:0;
+    margin:0;
+  }
+
+  table{
+    font-size:11px;
+  }
+
+  th,td{
+    border:1px solid #000 !important;
+    padding:6px;
+  }
+
+  th{
+    background:#fff !important;
+    font-weight:bold;
+  }
+
+  tr{
+    page-break-inside:avoid;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  📦 HARGA BELI SUPPLIER — CV MESTIKA LESTARI
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <div class="print-area">
+      <button class="print-btn" onclick="window.print()">🖨️ Print Disini</button>
+    </div>
+
+    <h2>Daftar Harga Beli</h2>
+
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Cari nama barang / supplier...">
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>NO</th>
+            <th>KODE</th>
+            <th>NAMA BARANG</th>
+            <th>SUPPLIER</th>
+            <th>KEMASAN</th>
+            <th>HARGA SATUAN</th>
+            <th>ISI</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr>
+            <td colspan="7" style="text-align:center;">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    © CV Mestika Lestari
+  </div>
+
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyqQtD1qH4DXLHE03frW7BAl8iUkAwXewFm9PjQoXmaXS0iAergnuYVb1F_3BY7O5HF/exec";
+let allData = [];
+
+function rupiah(n){
+  return "Rp " + Number(n).toLocaleString("id-ID");
+}
+
+async function loadData(){
+  const res = await fetch(API_URL);
+  const data = await res.json();
+  allData = data;
+  renderTable(data);
+}
+
+function renderTable(data){
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+
+  if(!data.length){
+    tbody.innerHTML = `<tr><td colspan="7" align="center">Data tidak ditemukan</td></tr>`;
+    return;
+  }
+
+  data.forEach(r=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${r["NO"] ?? ""}</td>
+        <td>${r["KODE BARANG"] ?? ""}</td>
+        <td>${r["NAMA BARANG"] ?? ""}</td>
+        <td>${r["SUPPLIER"] ?? ""}</td>
+        <td>${r["JENIS KEMASAN"] ?? ""}</td>
+        <td class="price">${rupiah(r["HARGA SATUAN"])}</td>
+        <td>${r["ISI/SATUAN"] ?? ""}</td>
+      </tr>
+    `;
+  });
+}
+
+document.getElementById("search").addEventListener("input",e=>{
+  const k = e.target.value.toLowerCase();
+  const f = allData.filter(x =>
+    x["NAMA BARANG"].toLowerCase().includes(k) ||
+    x["SUPPLIER"].toLowerCase().includes(k)
+  );
+  renderTable(f);
+});
+
+loadData();
+</script>
+
+</body>
+</html>

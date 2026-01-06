@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPB — CV Mestika Lestari</title>
+
+<style>
+/* ===== BASE ===== */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  color: #111;
+}
+
+header {
+  background: #2e7d32;
+  color: #fff;
+  padding: 18px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.container {
+  padding: 20px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.print-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #2e7d32;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.print-btn:hover {
+  background: #1b5e20;
+}
+
+/* ===== TABLE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+th {
+  background: #e8f5e9;
+  text-align: center;
+}
+
+td {
+  vertical-align: top;
+}
+
+/* ===== PRINT MODE ===== */
+@media print {
+
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  header,
+  .actions {
+    display: none !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0;
+  }
+
+  table {
+    font-size: 11px;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid #000 !important;
+    padding: 6px;
+  }
+
+  th {
+    background: #fff !important;
+    font-weight: bold;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>DATA SPB — CV MESTIKA LESTARI</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <div class="actions">
+      <button class="print-btn" onclick="window.print()">🖨️ Print Disini</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>NO</th>
+          <th>NO SPB</th>
+          <th>TANGGAL KIRIM</th>
+          <th>NAMA CUSTOMER</th>
+          <th>NAMA BARANG</th>
+          <th>BANYAKNYA</th>
+          <th>KETERANGAN</th>
+        </tr>
+      </thead>
+      <tbody id="tableData"></tbody>
+    </table>
+
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwMhpQiDTPTDLHkVv7pBk9yPa2IdxqLxce5u-CfNNWL-JJ1HwlL-uiOD0YDgo1LTsx03g/exec";
+
+async function loadSPB() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+
+  let html = "";
+  data.forEach((row, i) => {
+    html += `
+      <tr>
+        <td style="text-align:center">${i + 1}</td>
+        <td>${row["NO SPB"] || ""}</td>
+        <td>${row["TANGGAL KIRIM"] || ""}</td>
+        <td>${row["NAMA CUSTOMER"] || ""}</td>
+        <td>${row["NAMA BARANG"] || ""}</td>
+        <td style="text-align:center">${row["BANYAKNYA"] || ""}</td>
+        <td>${row["KETERANGAN"] || ""}</td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("tableData").innerHTML = html;
+}
+
+loadSPB();
+</script>
+
+</body>
+</html>

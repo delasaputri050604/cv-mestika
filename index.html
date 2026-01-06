@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — CV Mestika Lestari</title>
+
+<style>
+* { box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+
+body {
+  margin: 0;
+  background: #f1f8f4;
+}
+
+/* HEADER */
+.header {
+  height: 60px;
+  background: #1b5e20;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.header img {
+  height: 38px;
+  margin-right: 12px;
+}
+
+.header h1 {
+  font-size: 18px;
+  margin: 0;
+  flex: 1;
+}
+
+/* PRINT BUTTON */
+.print-btn {
+  background: white;
+  color: #1b5e20;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.print-btn:hover {
+  background: #e8f5e9;
+}
+
+/* LAYOUT */
+.wrapper {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: #2e7d32;
+  color: white;
+}
+
+.sidebar a {
+  display: block;
+  padding: 15px 22px;
+  color: #e8f5e9;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.sidebar a:hover {
+  background: #1b5e20;
+}
+
+.sidebar a.active {
+  background: #145a1f;
+  font-weight: bold;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  background: #f9fbfa;
+  padding: 20px;
+}
+
+/* DASHBOARD */
+/* DASHBOARD BARU */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.stat-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: white;
+}
+
+.bg-green { background: #2e7d32; }
+.bg-blue { background: #1565c0; }
+.bg-orange { background: #ef6c00; }
+.bg-purple { background: #6a1b9a; }
+
+.stat-info h3 {
+  margin: 0;
+  font-size: 22px;
+  color: #1b5e20;
+}
+
+.stat-info span {
+  font-size: 13px;
+  color: #555;
+}
+
+/* QUICK MENU */
+.quick-menu {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 15px;
+}
+
+.quick-item {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+}
+
+.quick-item:hover {
+  transform: translateY(-3px);
+  background: #e8f5e9;
+}
+
+.quick-item div {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.quick-item span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  margin: 0;
+  color: #1b5e20;
+}
+
+.card p {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* IFRAME */
+iframe {
+  width: 100%;
+  height: calc(100vh - 100px);
+  border: none;
+  display: none;
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: #4b5563;
+  margin-top: 15px;
+}
+
+/* PRINT MODE */
+@media print {
+  .sidebar,
+  .header,
+  .footer {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  iframe {
+    height: auto;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  
+  <h1>CV Mestika Lestari — Sistem Administrasi</h1>
+</div>
+
+<div class="wrapper">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <a class="active" onclick="showDashboard(this)">🏠 Dashboard</a>
+
+    <a onclick="loadPage(this,'master_barang.html')">📚 Master Barang</a>
+    <a onclick="loadPage(this,'harga_beli.html')">📥 Harga Beli</a>
+    <a onclick="loadPage(this,'harga_jual.html')">📤 Harga Jual</a>
+
+    <hr style="border:0;border-top:1px solid rgba(255,255,255,0.2);margin:10px">
+
+    <a onclick="loadPage(this,'invoice.html')">🧾 Invoice</a>
+    <a onclick="loadPage(this,'jatem.html')">⏰ Jatuh Tempo</a>
+    <a onclick="loadPage(this,'spb.html')">📦 SPB</a>
+    <a onclick="loadPage(this,'Po_google.html')">📑 Purchase Order</a>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+
+  <!-- STAT CARD -->
+  <div class="dashboard">
+    <div class="stat-card">
+      <div class="stat-icon bg-green">📊</div>
+      <div class="stat-info">
+        <h3>Sistem Aktif</h3>
+        <span>Terhubung ke Google Sheet</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-blue">🧾</div>
+      <div class="stat-info">
+        <h3>Invoice</h3>
+        <span>Kelola & cetak invoice</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-orange">⏰</div>
+      <div class="stat-info">
+        <h3>Jatuh Tempo</h3>
+        <span>Monitoring pembayaran</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-purple">📦</div>
+      <div class="stat-info">
+        <h3>SPB & PO</h3>
+        <span>Distribusi & pembelian</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK MENU -->
+  <div class="quick-menu">
+    <div class="quick-item" onclick="loadPage(this,'invoice.html')">
+      <div>🧾</div>
+      <span>Invoice</span>
+    </div>
+
+    <div class="quick-item" onclick="loadPage(this,'jatem.html')">
+      <div>⏰</div>
+      <span>Jatuh Tempo</span>
+    </div>
+
+    <div class="quick-item" onclick="loadPage(this,'spb.html')">
+      <div>📦</div>
+      <span>SPB</span>
+    </div>
+
+    <div class="quick-item" onclick="loadPage(this,'Po_google.html')">
+      <div>📑</div>
+      <span>Purchase Order</span>
+    </div>
+  </div>
+
+</div>
+
+
+    <!-- IFRAME -->
+    <iframe id="frame"></iframe>
+
+    <div class="footer">
+      © CV Mestika Lestari
+    </div>
+  </div>
+</div>
+
+<script>
+function resetMenu(el) {
+  document.querySelectorAll(".sidebar a")
+    .forEach(a => a.classList.remove("active"));
+  el.classList.add("active");
+}
+
+function showDashboard(el) {
+  resetMenu(el);
+  document.getElementById("dashboard").style.display = "grid";
+  document.getElementById("frame").style.display = "none";
+}
+
+function loadPage(el, page) {
+  resetMenu(el);
+  document.getElementById("dashboard").style.display = "none";
+  const frame = document.getElementById("frame");
+  frame.style.display = "block";
+  frame.src = page;
+}
+
+function printPage() {
+  const frame = document.getElementById("frame");
+
+  // Kalau masih di dashboard
+  if (frame.style.display === "none" || !frame.src) {
+    window.print();
+    return;
+  }
+
+  // Tunggu iframe siap dulu
+  frame.onload = function () {
+    setTimeout(() => {
+      try {
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+      } catch (e) {
+        alert("Gagal print. Pastikan file ada di folder yang sama.");
+        console.error(e);
+      }
+    }, 500);
+  };
+
+  // trigger ulang load biar onload kepanggil
+  frame.src = frame.src;
+}
+</script>
+
+</body>
+</html>
