@@ -2,142 +2,145 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1200">
+
 <title>Jatuh Tempo — CV Mestika Lestari</title>
 
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
-body {
-  margin: 0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f4f6f8;
+*{
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  margin:0;
+  background:#f4f6f8;
 }
 
 /* HEADER */
-header {
-  background: #1b5e20;
-  color: white;
-  padding: 22px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
+header{
+  background:#1b5e20;
+  color:#fff;
+  padding:20px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
 }
 
-/* LAYOUT */
-.container {
-  width: 95%;
-  max-width: 1200px;
-  margin: 25px auto;
+/* CONTAINER */
+.container{
+  width:1200px;
+  margin:20px auto;
 }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
+/* SEARCH */
+.search-box{
+  background:#fff;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:10px;
 }
 
-h2 {
-  margin-top: 0;
-  color: #1b5e20;
+.search-box input{
+  width:100%;
+  padding:10px;
+  font-size:14px;
 }
 
-/* FORM */
-.form-grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+/* ACTION */
+.action{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-bottom:10px;
 }
 
-input {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-button {
-  margin-top: 12px;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: #1b5e20;
-  color: white;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #145a1f;
-}
-
-/* PRINT BUTTON */
-.print-btn {
-  margin-bottom: 15px;
+button{
+  padding:8px 16px;
+  border:none;
+  border-radius:6px;
+  background:#1b5e20;
+  color:#fff;
+  cursor:pointer;
 }
 
 /* TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  font-size: 14px;
+.table-wrap{
+  background:#fff;
+  border-radius:8px;
+  overflow-x:auto;
 }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 10px;
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
 }
 
-th {
-  background: #c8e6c9;
+th,td{
+  border:1px solid #ccc;
+  padding:10px;
 }
 
-tr:nth-child(even) {
-  background: #f1f8e9;
+th{
+  background:#c8e6c9;
+  text-align:center;
+}
+
+tbody tr:nth-child(even){
+  background:#f1f8e9;
+}
+
+tbody tr:hover{
+  background:#e8f5e9;
 }
 
 /* STATUS */
-.status {
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 12px;
-  color: white;
-  text-align: center;
+.status{
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+  color:#fff;
+  text-align:center;
 }
 
-.lunas { background: #16a34a; }
-.terlambat { background: #dc2626; }
-.warning { background: #facc15; color: #000; }
-.aktif { background: #2563eb; }
+.lunas{background:#16a34a}
+.terlambat{background:#dc2626}
+.warning{background:#facc15;color:#000}
+.aktif{background:#2563eb}
 
-.footer {
-  text-align: center;
-  font-size: 13px;
-  color: #777;
-  margin: 25px 0;
-}
-
-/* ================= PRINT MODE ================= */
-@media print {
-
-  body {
-    background: white;
+/* PRINT LANDSCAPE */
+@media print{
+  @page{
+    size:A4 landscape;
+    margin:15mm;
   }
 
   header,
-  .footer,
-  .no-print {
-    display: none !important;
+  .search-box,
+  .action{
+    display:none !important;
   }
 
-  .card {
-    box-shadow: none;
-    border: none;
+  body{
+    background:#fff;
   }
 
-  table {
-    font-size: 12px;
+  .container{
+    width:100%;
+  }
+
+  table{
+    font-size:12px;
+  }
+
+  th,td{
+    border:1px solid #000;
   }
 }
 </style>
@@ -149,30 +152,16 @@ tr:nth-child(even) {
 
 <div class="container">
 
-  <!-- BUTTON PRINT -->
-  <button onclick="window.print()" class="print-btn no-print">
-    🖨️ Print Disini
-  </button>
-
-  <!-- FORM INPUT (TIDAK IKUT PRINT) -->
-  <div class="card no-print">
-    <h2>Input Jatuh Tempo</h2>
-    <div class="form-grid">
-      <input id="nomor_invoice" placeholder="Nomor Invoice">
-      <input id="nomor_faktur" placeholder="Nomor Faktur">
-      <input id="tanggal_terima" type="date">
-      <input id="nama_customer" placeholder="Nama Customer">
-      <input id="total_tagihan" type="number" placeholder="Total Tagihan">
-      <input id="jatuh_tempo" type="date">
-      <input id="keterangan" placeholder="Keterangan (Lunas / Cash)">
-    </div>
-    <button onclick="simpan()">💾 Simpan Data</button>
-    <div id="info"></div>
+  <div class="search-box">
+    <input id="searchInput" placeholder="Cari invoice, customer, keterangan..." onkeyup="filterData()">
   </div>
 
-  <!-- TABEL (INI YANG DI PRINT) -->
-  <div class="card">
-    <h2>Data Jatuh Tempo</h2>
+  <div class="action">
+    <button onclick="window.print()">🖨 Print</button>
+    <button onclick="exportPDF()">📄 PDF</button>
+  </div>
+
+  <div class="table-wrap">
     <table>
       <thead id="thead"></thead>
       <tbody id="tbody"></tbody>
@@ -181,72 +170,84 @@ tr:nth-child(even) {
 
 </div>
 
-<div class="footer">© CV Mestika Lestari</div>
-
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzs6QQMeRvDu5-vZXsPnXdgODY-IKdGmYhCYP8VVc22cd-YHO2ktfznT2G3CQLxOiAG/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbzs6QQMeRvDu5-vZXsPnXdgODY-IKdGmYhCYP8VVc22cd-YHO2ktfznT2G3CQLxOiAG/exec";
+let dataJT=[];
 
-/* STATUS */
-function getStatus(jt, ket) {
-  if (ket && ket.toLowerCase().includes("lunas"))
-    return {text:"LUNAS", cls:"lunas"};
-
-  const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(jt); d.setHours(0,0,0,0);
-  const diff = Math.ceil((d - today)/(1000*60*60*24));
-
-  if (diff < 0) return {text:"TERLAMBAT", cls:"terlambat"};
-  if (diff <= 3) return {text:"JATUH TEMPO", cls:"warning"};
-  return {text:"AKTIF", cls:"aktif"};
+/* ===== HELPER ===== */
+function rupiah(v){
+  if(!v) return "";
+  return "Rp " + Number(v).toLocaleString("id-ID");
 }
 
-/* LOAD DATA */
-async function loadData() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
-  if (!data.length) return;
-
-  const headers = Object.keys(data[0]);
-  thead.innerHTML =
-    "<tr>" + headers.map(h=>`<th>${h}</th>`).join("") + "<th>STATUS</th></tr>";
-
-  let rows = "";
-  data.forEach(r => {
-    const st = getStatus(r["JATUH TEMPO"], r["KETERANGAN"]);
-    rows += "<tr>";
-    headers.forEach(h => rows += `<td>${r[h] ?? ""}</td>`);
-    rows += `<td><span class="status ${st.cls}">${st.text}</span></td></tr>`;
-  });
-  tbody.innerHTML = rows;
+function tanggal(v){
+  if(!v) return "";
+  return v.toString().substring(0,10);
 }
 
-/* SIMPAN */
-async function simpan() {
-  info.innerText = "Menyimpan...";
-  const payload = {
-    "NOMOR INVOICE": nomor_invoice.value,
-    "NOMOR FAKTUR": nomor_faktur.value,
-    "TANGGAL TERIMA": tanggal_terima.value,
-    "NAMA CUSTOMER": nama_customer.value,
-    "TOTAL TAGIHAN": total_tagihan.value,
-    "JATUH TEMPO": jatuh_tempo.value,
-    "KETERANGAN": keterangan.value
-  };
+function statusJT(jt,ket){
+  if(ket && ket.toLowerCase().includes("lunas"))
+    return {t:"LUNAS",c:"lunas"};
 
-  const res = await fetch(API_URL,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify(payload)
+  const today=new Date(); today.setHours(0,0,0,0);
+  const d=new Date(jt); d.setHours(0,0,0,0);
+  const diff=Math.ceil((d-today)/86400000);
+
+  if(diff<0) return {t:"TERLAMBAT",c:"terlambat"};
+  if(diff<=3) return {t:"JATUH TEMPO",c:"warning"};
+  return {t:"AKTIF",c:"aktif"};
+}
+
+/* ===== LOAD ===== */
+async function loadData(){
+  const res=await fetch(API_URL);
+  dataJT=await res.json();
+  render(dataJT);
+}
+
+/* ===== RENDER ===== */
+function render(data){
+  if(!data.length) return;
+
+  const headers=Object.keys(data[0]);
+  thead.innerHTML="<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"<th>STATUS</th></tr>";
+
+  let html="";
+  data.forEach(r=>{
+    const st=statusJT(r["JATUH TEMPO"],r["KETERANGAN"]);
+    html+="<tr>";
+    headers.forEach(h=>{
+      if(h.includes("TANGGAL") || h.includes("JATUH"))
+        html+=`<td>${tanggal(r[h])}</td>`;
+      else if(h.includes("TOTAL"))
+        html+=`<td align="right">${rupiah(r[h])}</td>`;
+      else
+        html+=`<td>${r[h] ?? ""}</td>`;
+    });
+    html+=`<td><span class="status ${st.c}">${st.t}</span></td></tr>`;
   });
 
-  const r = await res.json();
-  if (r.status === "success") {
-    info.innerText = "✅ Data tersimpan";
-    document.querySelectorAll("input").forEach(i=>i.value="");
-    loadData();
-  } else {
-    info.innerText = "❌ Gagal simpan";
-  }
+  tbody.innerHTML=html;
+}
+
+/* ===== SEARCH ===== */
+function filterData(){
+  const k=searchInput.value.toLowerCase();
+  render(dataJT.filter(r=>Object.values(r).join(" ").toLowerCase().includes(k)));
+}
+
+/* ===== PDF LANDSCAPE ===== */
+async function exportPDF(){
+  const {jsPDF}=window.jspdf;
+  const canvas=await html2canvas(document.body,{scale:2});
+  const img=canvas.toDataURL("image/png");
+
+  const pdf=new jsPDF("landscape","mm","a4");
+  const w=pdf.internal.pageSize.getWidth();
+  const h=canvas.height*w/canvas.width;
+
+  pdf.addImage(img,"PNG",0,10,w,h);
+  pdf.save("Jatuh_Tempo_CV_Mestika_Lestari.pdf");
 }
 
 loadData();

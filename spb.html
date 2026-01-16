@@ -5,116 +5,131 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SPB — CV Mestika Lestari</title>
 
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
-/* ===== BASE ===== */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  color: #111;
+*{
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
-header {
-  background: #2e7d32;
-  color: #fff;
-  padding: 18px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
+body{
+  margin:0;
+  background:#f4f6f8;
 }
 
-.container {
-  padding: 20px;
+header{
+  background:#2e7d32;
+  color:#fff;
+  padding:18px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
 }
 
-.card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+.container{
+  width:95%;
+  margin:20px auto;
 }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
+.card{
+  background:#fff;
+  padding:18px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
 }
 
-.print-btn {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #2e7d32;
-  color: #fff;
-  cursor: pointer;
-  font-size: 14px;
+/* ACTIONS */
+.actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  gap:10px;
 }
 
-.print-btn:hover {
-  background: #1b5e20;
+.search-box input{
+  padding:9px;
+  width:280px;
 }
 
-/* ===== TABLE ===== */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+button{
+  padding:9px 16px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#2e7d32;
+  color:#fff;
 }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
+button:hover{
+  background:#1b5e20;
 }
 
-th {
-  background: #e8f5e9;
-  text-align: center;
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
 }
 
-td {
-  vertical-align: top;
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
 }
 
-/* ===== PRINT MODE ===== */
-@media print {
+th{
+  background:#e8f5e9;
+  text-align:center;
+}
 
-  @page {
-    size: A4 landscape;
-    margin: 12mm;
+/* GARIS PENANDA BARIS */
+tbody tr{
+  border-left:5px solid transparent;
+  transition:.15s;
+}
+
+tbody tr:nth-child(odd){
+  background:#fafafa;
+}
+
+tbody tr:nth-child(even){
+  background:#fff;
+}
+
+tbody tr:hover{
+  background:#e8f5e9;
+  border-left:5px solid #2e7d32;
+}
+
+/* PRINT */
+@media print{
+  @page{
+    size:A4 landscape;
+    margin:12mm;
   }
 
-  body {
-    background: #fff;
+  header,.actions{
+    display:none !important;
   }
 
-  header,
-  .actions {
-    display: none !important;
+  .card{
+    box-shadow:none;
+    padding:0;
   }
 
-  .card {
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0;
+  table{
+    font-size:11px;
   }
 
-  table {
-    font-size: 11px;
-    border-collapse: collapse;
+  th,td{
+    border:1px solid #000 !important;
   }
 
-  th, td {
-    border: 1px solid #000 !important;
-    padding: 6px;
-  }
-
-  th {
-    background: #fff !important;
-    font-weight: bold;
-  }
-
-  tr {
-    page-break-inside: avoid;
+  tbody tr{
+    border-left:4px solid #000 !important;
   }
 }
 </style>
@@ -125,11 +140,16 @@ td {
 <header>DATA SPB — CV MESTIKA LESTARI</header>
 
 <div class="container">
-
-  <div class="card">
+  <div class="card" id="printArea">
 
     <div class="actions">
-      <button class="print-btn" onclick="window.print()">🖨️ Print Disini</button>
+      <div class="search-box">
+        <input id="searchInput" placeholder="Cari SPB / Customer / Barang..." onkeyup="filterData()">
+      </div>
+      <div>
+        <button onclick="window.print()">🖨️ Print</button>
+        <button onclick="exportPDF()">📄 PDF</button>
+      </div>
     </div>
 
     <table>
@@ -151,28 +171,63 @@ td {
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwMhpQiDTPTDLHkVv7pBk9yPa2IdxqLxce5u-CfNNWL-JJ1HwlL-uiOD0YDgo1LTsx03g/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbwMhpQiDTPTDLHkVv7pBk9yPa2IdxqLxce5u-CfNNWL-JJ1HwlL-uiOD0YDgo1LTsx03g/exec";
+let spbData=[];
 
-async function loadSPB() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
+/* FORMAT TANGGAL TANPA JAM */
+function formatTanggal(v){
+  if(!v) return "";
+  const d=new Date(v);
+  if(isNaN(d)) return v;
+  return d.toISOString().split("T")[0];
+}
 
-  let html = "";
-  data.forEach((row, i) => {
-    html += `
+/* LOAD */
+async function loadSPB(){
+  const res=await fetch(API_URL);
+  spbData=await res.json();
+  render(spbData);
+}
+
+/* RENDER */
+function render(data){
+  let html="";
+  data.forEach((r,i)=>{
+    html+=`
       <tr>
-        <td style="text-align:center">${i + 1}</td>
-        <td>${row["NO SPB"] || ""}</td>
-        <td>${row["TANGGAL KIRIM"] || ""}</td>
-        <td>${row["NAMA CUSTOMER"] || ""}</td>
-        <td>${row["NAMA BARANG"] || ""}</td>
-        <td style="text-align:center">${row["BANYAKNYA"] || ""}</td>
-        <td>${row["KETERANGAN"] || ""}</td>
+        <td align="center">${i+1}</td>
+        <td>${r["NO SPB"]||""}</td>
+        <td>${formatTanggal(r["TANGGAL KIRIM"])}</td>
+        <td>${r["NAMA CUSTOMER"]||""}</td>
+        <td>${r["NAMA BARANG"]||""}</td>
+        <td align="center">${r["BANYAKNYA"]||""}</td>
+        <td>${r["KETERANGAN"]||""}</td>
       </tr>
     `;
   });
+  tableData.innerHTML=html;
+}
 
-  document.getElementById("tableData").innerHTML = html;
+/* SEARCH */
+function filterData(){
+  const k=searchInput.value.toLowerCase();
+  render(spbData.filter(r=>
+    Object.values(r).join(" ").toLowerCase().includes(k)
+  ));
+}
+
+/* PDF */
+async function exportPDF(){
+  const { jsPDF } = window.jspdf;
+  const canvas = await html2canvas(document.getElementById("printArea"));
+  const img = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("landscape","mm","a4");
+  const w = pdf.internal.pageSize.getWidth();
+  const h = canvas.height * w / canvas.width;
+
+  pdf.addImage(img,"PNG",0,10,w,h);
+  pdf.save("SPB_CV_Mestika_Lestari.pdf");
 }
 
 loadSPB();

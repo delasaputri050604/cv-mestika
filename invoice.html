@@ -6,111 +6,85 @@
 <title>Invoice — CV Mestika Lestari</title>
 
 <style>
-body {
+body{
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
+  background:#f4f6f8;
+  margin:0;
 }
 
-/* HEADER */
-header {
-  background: #2e7d32;
-  color: white;
-  padding: 20px;
-  text-align: center;
+header{
+  background:#2e7d32;
+  color:white;
+  padding:20px;
+  text-align:center;
 }
 
-/* BUTTON */
-.print-btn {
-  margin: 15px 0;
-  padding: 10px 16px;
-  background: #2e7d32;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.container{
+  width:95%;
+  max-width:1300px;
+  margin:auto;
 }
 
-/* CONTAINER */
-.container {
-  width: 95%;
-  max-width: 1200px;
-  margin: auto;
+.card{
+  background:white;
+  margin-top:20px;
+  padding:20px;
+  border-radius:8px;
+  box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
-/* CARD */
-.card {
-  background: white;
-  margin-top: 20px;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.1);
+button{
+  padding:10px 16px;
+  background:#2e7d32;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin-right:6px;
 }
 
-/* FORM */
-form {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-  gap: 15px;
-}
-
-input, select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button.submit-btn {
-  grid-column: span 2;
+input{
+  padding:10px;
+  width:250px;
+  margin-bottom:10px;
 }
 
 /* TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+  font-size:13px;
 }
 
-th, td {
-  border: 1px solid #000;
-  padding: 8px;
-  font-size: 13px;
+th,td{
+  border:1px solid #000;
+  padding:8px;
 }
 
-th {
-  background: #e8f5e9;
+th{
+  background:#e8f5e9;
 }
 
-/* FOOTER */
-.footer {
-  text-align: center;
-  margin: 30px 0;
-  color: #777;
+/* ZEBRA ROW */
+tbody tr:nth-child(odd){
+  background:#f9f9f9;
 }
 
-/* ===== PRINT MODE ===== */
-@media print {
+tbody tr:nth-child(even){
+  background:#ffffff;
+}
 
-  body {
-    background: white;
-  }
+tbody tr:hover{
+  background:#e0f2f1;
+}
 
-  header,
-  .no-print,
-  form,
-  .print-btn,
-  .footer {
-    display: none !important;
-  }
-
-  .card {
-    box-shadow: none;
-    border: none;
-  }
-
-  table {
-    font-size: 12px;
-  }
+/* PRINT */
+@media print{
+  @page{ size: A4 landscape; }
+  header,.no-print{ display:none!important; }
+  body{ background:white; }
+  .card{ box-shadow:none; border:none; }
 }
 </style>
 </head>
@@ -124,35 +98,14 @@ th {
 
 <div class="container">
 
-  <!-- PRINT BUTTON -->
-  <button onclick="window.print()" class="print-btn no-print">
-    🖨️ Print Disini
-  </button>
-
-  <!-- FORM INPUT (TIDAK IKUT PRINT) -->
   <div class="card no-print">
-    <h2>Input Invoice</h2>
-    <form id="invoiceForm">
-      <input id="nmr_invoice" placeholder="Nomor Invoice" required>
-      <input id="tgl_invoice" placeholder="Tanggal Invoice" required>
-      <input id="no_po_customer" placeholder="No PO Customer">
-      <input id="nama_customer" placeholder="Nama Customer" required>
-      <input id="nama_barang" placeholder="Nama Barang" required>
-      <input id="banyaknya" placeholder="Banyaknya" required>
-      <input id="harga_barang" type="number" placeholder="Harga Barang" required>
-
-      <select id="status">
-        <option value="kredit">Kredit</option>
-        <option value="lunas">Lunas</option>
-      </select>
-
-      <button class="submit-btn" type="submit">💾 SIMPAN INVOICE</button>
-    </form>
+    <input id="search" placeholder="🔍 Cari invoice...">
+    <br>
+    <button onclick="window.print()">🖨️ Print</button>
+    <button onclick="exportPDF()">📄 Export PDF</button>
   </div>
 
-  <!-- DATA TABLE (IKUT PRINT) -->
   <div class="card">
-    <h2>Data Invoice</h2>
     <table>
       <thead id="thead"></thead>
       <tbody id="tbody"></tbody>
@@ -161,68 +114,91 @@ th {
 
 </div>
 
-<div class="footer">
-  © CV Mestika Lestari
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzE-YZQKET-UeZd43r194MEnEyysUQvohtQRx18Iee389UCCuxrQSO7FQi_iTeE7-uk/exec";
+let allData = [];
 
-// LOAD DATA
-async function loadInvoice() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
+/* ===== UTIL ===== */
+function formatTanggal(val){
+  if(!val) return "";
+  return new Date(val).toLocaleDateString("id-ID");
+}
 
-  if (!data.length) return;
+function formatRupiah(val){
+  if(val === "" || val === null || val === undefined || isNaN(val)){
+    return "";
+  }
+  return "Rp " + Number(val).toLocaleString("id-ID");
+}
+
+/* ===== RENDER TABLE ===== */
+function renderTable(data){
+  if(!data.length) return;
 
   thead.innerHTML =
     "<tr>" +
-    Object.keys(data[0]).map(h => `<th>${h}</th>`).join("") +
+    Object.keys(data[0]).map(h=>`<th>${h}</th>`).join("") +
     "</tr>";
 
   tbody.innerHTML = "";
 
-  data.forEach(row => {
+  data.forEach(row=>{
     tbody.innerHTML +=
       "<tr>" +
-      Object.values(row).map(v => `<td>${v ?? ""}</td>`).join("") +
+      Object.entries(row).map(([key,val])=>{
+
+        if(key.includes("TGL")){
+          return `<td>${formatTanggal(val)}</td>`;
+        }
+
+        if(
+          key.includes("HARGA") ||
+          key.includes("PPN") ||
+          key.includes("TOTAL")
+        ){
+          return `<td style="text-align:right">${formatRupiah(val)}</td>`;
+        }
+
+        if(key.includes("BANYAK") || key.includes("QTY")){
+          return `<td style="text-align:center">${val ?? ""}</td>`;
+        }
+
+        return `<td>${val ?? ""}</td>`;
+      }).join("") +
       "</tr>";
   });
 }
 
-// SUBMIT DATA
-invoiceForm.addEventListener("submit", async e => {
-  e.preventDefault();
+/* ===== LOAD DATA ===== */
+async function loadData(){
+  const res = await fetch(API_URL);
+  allData = await res.json();
+  renderTable(allData);
+}
 
-  const payload = {
-    "NMR INVOICE": nmr_invoice.value,
-    "TGL INVOICE": tgl_invoice.value,
-    "NO PO_CUSTOMER": no_po_customer.value,
-    "NAMA CUSTOMER": nama_customer.value,
-    "NAMA BARANG": nama_barang.value,
-    "BANYAKNYA": banyaknya.value,
-    "HARGA BARANG": Number(harga_barang.value),
-    "STATUS": status.value
-  };
-
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-
-  const result = await res.json();
-
-  if (result.status === "success") {
-    alert("✅ Invoice berhasil disimpan");
-    invoiceForm.reset();
-    loadInvoice();
-  } else {
-    alert("❌ Gagal menyimpan");
-  }
+/* ===== SEARCH ===== */
+search.addEventListener("input",()=>{
+  const q = search.value.toLowerCase();
+  const filtered = allData.filter(r =>
+    Object.values(r).some(v => String(v).toLowerCase().includes(q))
+  );
+  renderTable(filtered);
 });
 
-loadInvoice();
+/* ===== PDF ===== */
+function exportPDF(){
+  const element = document.querySelector(".card:last-child");
+  html2pdf().set({
+    margin:5,
+    filename:'Invoice-CV-Mestika-Lestari.pdf',
+    html2canvas:{ scale:2 },
+    jsPDF:{ unit:'mm', format:'a4', orientation:'landscape' }
+  }).from(element).save();
+}
+
+loadData();
 </script>
 
 </body>

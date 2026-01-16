@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Purchase Order - CV Mestika Lestari</title>
 
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
 *{
   box-sizing:border-box;
@@ -14,10 +18,9 @@
 body{
   margin:0;
   background:#f4f6f8;
-  color:#000;
 }
 
-/* ===== HEADER WEB ===== */
+/* HEADER */
 header{
   background:#2e7d32;
   color:#fff;
@@ -27,57 +30,43 @@ header{
   font-weight:bold;
 }
 
-/* ===== CONTAINER ===== */
+/* CONTAINER */
 .container{
   width:95%;
   margin:20px auto;
 }
 
-/* ===== FORM ===== */
-form{
+/* SEARCH */
+.search-box{
   background:#fff;
-  padding:15px;
+  padding:12px;
   border-radius:8px;
-  margin-bottom:20px;
+  margin-bottom:12px;
 }
 
-.form-grid{
+.search-box input{
+  width:100%;
+  padding:10px;
+}
+
+/* ACTION */
+.action{
   display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.form-grid input{
-  flex:1 1 180px;
-  padding:8px;
-}
-
-button{
-  margin-top:15px;
-  padding:10px 25px;
-  background:#2e7d32;
-  color:#fff;
-  border:none;
-  border-radius:5px;
-  cursor:pointer;
-}
-
-/* ===== PRINT BUTTON ===== */
-.print-area{
-  text-align:right;
+  justify-content:flex-end;
+  gap:8px;
   margin-bottom:10px;
 }
 
-.print-btn{
-  padding:8px 18px;
-  background:#2e7d32;
-  color:#fff;
+button{
+  padding:8px 16px;
   border:none;
   border-radius:5px;
+  background:#2e7d32;
+  color:#fff;
   cursor:pointer;
 }
 
-/* ===== TABLE ===== */
+/* TABLE */
 table{
   width:100%;
   border-collapse:collapse;
@@ -95,22 +84,27 @@ th{
   text-align:center;
 }
 
-/* ===== PRINT MODE ===== */
-@media print{
+/* ROW MARKER */
+tbody tr:nth-child(odd){
+  background:#fafafa;
+}
 
+tbody tr:hover{
+  background:#e8f5e9;
+  border-left:5px solid #2e7d32;
+}
+
+/* PRINT */
+@media print{
   @page{
-    size:A4 portrait;
+    size:A4 landscape;
     margin:15mm;
   }
 
-  body{
-    background:#fff;
-  }
-
   header,
-  form,
-  .print-area{
-    display:none !important;
+  .search-box,
+  .action{
+    display:none;
   }
 
   table{
@@ -118,17 +112,7 @@ th{
   }
 
   th,td{
-    border:1px solid #000 !important;
-    padding:6px;
-  }
-
-  th{
-    background:#fff !important;
-    font-weight:bold;
-  }
-
-  tr{
-    page-break-inside:avoid;
+    border:1px solid #000;
   }
 
   .print-title{
@@ -138,7 +122,7 @@ th{
   }
 }
 
-/* ===== PRINT TITLE ===== */
+/* PRINT TITLE */
 .print-title{
   display:none;
 }
@@ -151,88 +135,116 @@ th{
 
 <div class="container">
 
-<form onsubmit="savePO(); return false;">
-  <h3>Tambah Purchase Order</h3>
-
-  <div class="form-grid">
-    <input id="no_po" placeholder="No PO" required>
-    <input id="tanggal_po" type="date" required>
-    <input id="supplier" placeholder="Supplier" required>
-    <input id="barang" placeholder="Barang">
-    <input id="pack" placeholder="Pack">
-    <input id="qty" type="number" placeholder="Qty">
-    <input id="harga" type="number" placeholder="Harga">
-    <input id="status" placeholder="Status">
+  <div class="search-box">
+    <input id="searchInput" placeholder="Cari data..." onkeyup="filterData()">
   </div>
 
-  <button>Simpan</button>
-</form>
+  <div class="action">
+    <button onclick="window.print()">🖨 Print</button>
+    <button onclick="exportPDF()">📄 PDF</button>
+  </div>
 
-<div class="print-area">
-  <button class="print-btn" onclick="window.print()">🖨️ Print Disini</button>
-</div>
+  <div class="print-title">
+    <h2>PURCHASE ORDER</h2>
+    <div>CV Mestika Lestari</div>
+    <div id="printDate"></div>
+  </div>
 
-<div class="print-title">
-  <h2>PURCHASE ORDER</h2>
-  <div>CV Mestika Lestari</div>
-  <div id="printDate"></div>
-</div>
-
-<table id="poTable"></table>
+  <table>
+    <thead id="thead"></thead>
+    <tbody id="tbody"></tbody>
+  </table>
 
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwyt_FjGdWvrZJLldoKY0rEg-BToGCUk8XkhO73YSke-FLMy5D7PJ7Fxug1beX78kgU5g/exec";
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwyt_FjGdWvrZJLldoKY0rEg-BToGCUk8XkhO73YSke-FLMy5D7PJ7Fxug1beX78kgU5g/exec";
 
-async function loadPO(){
-  const res = await fetch(API_URL);
-  const data = await res.json();
+let dataPO=[];
 
+/* helper */
+function parseAngka(v){
+  if(!v) return "";
+  const n=v.toString().replace(/[^0-9]/g,"");
+  return n?Number(n):"";
+}
+
+function rupiah(n){
+  if(n==="" || n===null) return "";
+  return "Rp " + n.toLocaleString("id-ID");
+}
+
+function formatTanggal(v){
+  if(!v) return "";
+  const d=new Date(v);
+  if(isNaN(d)) return v;
+  return d.toLocaleDateString("id-ID");
+}
+
+/* load */
+async function loadData(){
+  const res=await fetch(API_URL);
+  dataPO=await res.json();
+  render(dataPO);
+}
+
+/* render */
+function render(data){
   if(!data.length){
-    poTable.innerHTML = "<tr><td>Belum ada data</td></tr>";
+    tbody.innerHTML="<tr><td>Belum ada data</td></tr>";
     return;
   }
 
-  let html = "<tr>";
-  Object.keys(data[0]).forEach(h=> html += `<th>${h}</th>`);
-  html += "</tr>";
+  thead.innerHTML="<tr>"+Object.keys(data[0]).map(h=>`<th>${h}</th>`).join("")+"</tr>";
 
-  data.forEach(row=>{
-    html += "<tr>";
-    Object.values(row).forEach(v=> html += `<td>${v ?? ""}</td>`);
-    html += "</tr>";
+  let html="";
+  data.forEach(r=>{
+    html+="<tr>";
+    Object.entries(r).forEach(([k,v])=>{
+      if(k==="HARGA" || k==="PPN"){
+        html+=`<td align="right">${rupiah(parseAngka(v))}</td>`;
+      }
+      else if(k.includes("TANGGAL")){
+        html+=`<td>${formatTanggal(v)}</td>`;
+      }
+      else{
+        html+=`<td>${v??""}</td>`;
+      }
+    });
+    html+="</tr>";
   });
 
-  poTable.innerHTML = html;
+  tbody.innerHTML=html;
 }
 
-async function savePO(){
-  const payload = {
-    "NO PO": no_po.value,
-    "TANGGAL PO": tanggal_po.value,
-    "SUPPLIER": supplier.value,
-    "BARANG": barang.value,
-    "PACK": pack.value,
-    "QTY": qty.value,
-    "HARGA": harga.value,
-    "STATUS": status.value
-  };
-
-  await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
-  });
-
-  document.querySelector("form").reset();
-  loadPO();
+/* search */
+function filterData(){
+  const k=searchInput.value.toLowerCase();
+  render(
+    dataPO.filter(r=>
+      Object.values(r).join(" ").toLowerCase().includes(k)
+    )
+  );
 }
 
+/* PDF */
+async function exportPDF(){
+  const {jsPDF}=window.jspdf;
+  const canvas=await html2canvas(document.body);
+  const img=canvas.toDataURL("image/png");
+  const pdf=new jsPDF("landscape","mm","a4");
+  const w=pdf.internal.pageSize.getWidth();
+  const h=canvas.height*w/canvas.width;
+  pdf.addImage(img,"PNG",0,10,w,h);
+  pdf.save("PO_CV_Mestika_Lestari.pdf");
+}
+
+/* date */
 document.getElementById("printDate").innerText =
   "Tanggal Cetak: " + new Date().toLocaleDateString("id-ID");
 
-loadPO();
+loadData();
 </script>
 
 </body>

@@ -2,230 +2,206 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- VIEWPORT DIKUNCI -->
+<meta name="viewport" content="width=1200">
+
 <title>Master Barang — CV Mestika Lestari</title>
 
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
-* {
-  box-sizing: border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
+*{
+  box-sizing:border-box;
+  font-family:Segoe UI,Arial,sans-serif;
 }
 
-body {
-  margin: 0;
-  background: #f4f6f8;
-  padding: 0;
-  min-height: 100vh;
+body{
+  margin:0;
+  background:#f4f6f8;
 }
 
-header {
-  background: #1b5e20;
-  color: white;
-  padding: 18px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
+/* ===== HEADER ===== */
+header{
+  background:#1b5e20;
+  color:#fff;
+  padding:20px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
 }
 
-.container {
-  width: 95%;
-  max-width: 1100px;
-  margin: 20px auto;
+/* ===== CONTAINER FIXED ===== */
+.container{
+  width:1200px;
+  margin:20px auto;
 }
 
-/* FORM */
-.card {
-  background: white;
-  padding: 18px 24px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
+/* ===== CARD ===== */
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 6px 15px rgba(0,0,0,.1);
 }
 
-.card h2 {
-  color: #2e7d32;
-  margin-top: 0;
+/* ===== TOP BAR ===== */
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
-  gap: 12px;
-  margin-bottom: 12px;
+.search-box input{
+  width:350px;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
 
-input {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  width: 100%;
+button{
+  padding:10px 16px;
+  border:none;
+  border-radius:6px;
+  background:#2e7d32;
+  color:#fff;
+  cursor:pointer;
 }
 
-button {
-  padding: 10px 16px;
-  background: #2e7d32;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
+/* ===== TABLE ===== */
+.table-wrap{
+  overflow:hidden;
 }
 
-button:hover {
-  background: #145a1f;
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
 }
 
-/* TABLE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+th,td{
+  border:1px solid #ccc;
+  padding:8px 10px;
+  white-space:nowrap;
 }
 
-th, td {
-  padding: 10px;
-  border: 1px solid #ccc;
+th{
+  background:#c8e6c9;
+  text-align:center;
 }
 
-th {
-  background: #c8e6c9;
-  color: #000;
-  font-weight: 600;
+/* ZEBRA */
+tbody tr:nth-child(even){
+  background:#f1f8e9;
+}
+tbody tr:hover{
+  background:#e0f2f1;
 }
 
-tr:nth-child(even) {
-  background: #f1f8e9;
+/* ===== FOOTER ===== */
+.footer{
+  text-align:center;
+  margin-top:20px;
+  font-size:13px;
+  color:#777;
 }
 
-.status {
-  font-weight: bold;
-  text-align: center;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.footer {
-  text-align: center;
-  margin: 20px 0;
-  color: #777;
-  font-size: 13px;
+/* ===== PRINT LANDSCAPE ===== */
+@media print{
+  @page{
+    size:A4 landscape;
+    margin:12mm;
+  }
+  header,.top-bar,.footer{display:none}
+  body{background:#fff}
+  .card{box-shadow:none;padding:0}
+  table{font-size:11px}
+  th,td{border:1px solid #000}
+  tr{page-break-inside:avoid}
 }
 </style>
-
 </head>
+
 <body>
 
-<header>MASTER BARANG — CV Mestika Lestari</header>
+<header>MASTER BARANG — CV MESTIKA LESTARI</header>
 
 <div class="container">
 
-  <!-- FORM -->
   <div class="card">
-    <h2>Input Barang</h2>
-    <div class="form-grid">
-      <input id="kode_barang" placeholder="Kode Barang">
-      <input id="nama_barang" placeholder="Nama Barang">
-      <input id="jenis_kemasan" placeholder="Jenis Kemasan">
-      <input id="isi_perkemasan" placeholder="Isi Perkemasan">
-      <input id="satuan" placeholder="Satuan">
-      <input id="bahan_aktif" placeholder="Bahan Aktif">
+
+    <div class="top-bar">
+      <div class="search-box">
+        <input id="search" placeholder="Cari kode, nama barang, bahan aktif...">
+      </div>
+      <div>
+        <button onclick="window.print()">🖨 Print</button>
+        <button onclick="exportPDF()">📄 PDF</button>
+      </div>
     </div>
-    <button onclick="simpanMaster()">💾 Simpan Data</button>
-    <div id="status"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead id="thead"></thead>
+        <tbody id="tbody">
+          <tr><td align="center">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 
-  <!-- TABEL -->
-  <div class="card">
-    <h2>Daftar Master Barang</h2>
-    <table>
-      <thead id="thead"></thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-
-</div>
-
-<div class="footer">
-  © CV Mestika Lestari
+  <div class="footer">© CV Mestika Lestari</div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbw6gQrMF8D0v8kEBhMFN1F6X9kIu-MSI7D5zQb1zr2RZQwZReJqmUMxR_OPctPyTwYN/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbw6gQrMF8D0v8kEBhMFN1F6X9kIu-MSI7D5zQb1zr2RZQwZReJqmUMxR_OPctPyTwYN/exec";
+let allData=[];
 
-// LOAD DATA
-async function loadMaster() {
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-
-    if (!data.length) {
-      // jika sheet kosong
-      document.getElementById("thead").innerHTML = "";
-      document.getElementById("tbody").innerHTML = "<tr><td colspan='7' style='text-align:center'>Belum ada data</td></tr>";
-      return;
-    }
-
-    // bikin header otomatis
-    const headers = Object.keys(data[0]);
-    document.getElementById("thead").innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr>";
-
-    // isi tabel
-    let html = "";
-    data.forEach(row => {
-      html += "<tr>";
-      headers.forEach(h => {
-        html += `<td>${row[h] ?? ""}</td>`;
-      });
-      html += "</tr>";
-    });
-    document.getElementById("tbody").innerHTML = html;
-
-  } catch (err) {
-    console.error("Load error:", err);
-  }
+/* LOAD DATA */
+async function loadMaster(){
+  const res=await fetch(API_URL);
+  allData=await res.json();
+  render(allData);
 }
 
-// SIMPAN DATA
-async function simpanMaster() {
-  const payload = {
-    "KODE BARANG": kode_barang.value,
-    "NAMA BARANG": nama_barang.value,
-    "JENIS KEMASAN": jenis_kemasan.value,
-    "ISI PERKEMASAN": isi_perkemasan.value,
-    "SATUAN": satuan.value,
-    "BAHAN AKTIF": bahan_aktif.value
-  };
-
-  document.getElementById("status").innerText = "Menyimpan...";
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    const result = await res.json();
-    if (result.status === "success") {
-      document.getElementById("status").innerText = "✅ Berhasil disimpan!";
-      loadMaster();
-      // reset form
-      kode_barang.value = "";
-      nama_barang.value = "";
-      jenis_kemasan.value = "";
-      isi_perkemasan.value = "";
-      satuan.value = "";
-      bahan_aktif.value = "";
-    } else {
-      document.getElementById("status").innerText = "❌ Gagal simpan";
-    }
-  } catch (e) {
-    document.getElementById("status").innerText = "❌ Server tidak merespon";
-    console.error("simpan error:", e);
+/* RENDER TABLE */
+function render(data){
+  if(!data.length){
+    tbody.innerHTML="<tr><td align='center'>Belum ada data</td></tr>";
+    return;
   }
+  const headers=Object.keys(data[0]);
+  thead.innerHTML="<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr>";
+
+  tbody.innerHTML=data.map(r=>{
+    return "<tr>"+headers.map(h=>`<td>${r[h]??""}</td>`).join("")+"</tr>";
+  }).join("");
 }
 
-// load awal
+/* SEARCH */
+document.getElementById("search").addEventListener("input",e=>{
+  const k=e.target.value.toLowerCase();
+  render(allData.filter(r=>
+    Object.values(r).join(" ").toLowerCase().includes(k)
+  ));
+});
+
+/* PDF LANDSCAPE */
+async function exportPDF(){
+  const {jsPDF}=window.jspdf;
+  const canvas=await html2canvas(document.body);
+  const img=canvas.toDataURL("image/png");
+  const pdf=new jsPDF("landscape","mm","a4");
+  const w=pdf.internal.pageSize.getWidth();
+  const h=canvas.height*w/canvas.width;
+  pdf.addImage(img,"PNG",0,10,w,h);
+  pdf.save("Master_Barang_CV_Mestika_Lestari.pdf");
+}
+
 loadMaster();
 </script>
 

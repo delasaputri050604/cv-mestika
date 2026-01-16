@@ -2,22 +2,25 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1200">
 <title>Harga Jual — CV Mestika Lestari</title>
+
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 *{
   box-sizing:border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family:"Segoe UI",Arial,sans-serif;
 }
 
 body{
   margin:0;
   background:#f4f7f6;
-  color:#111;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header{
   background:#2e7d32;
   color:#fff;
@@ -27,71 +30,48 @@ header{
   gap:15px;
 }
 
-header img{
-  height:48px;
-}
+header img{height:48px}
+header h1{margin:0;font-size:22px}
 
-header h1{
-  font-size:22px;
-  margin:0;
-}
-
-/* ===== CONTAINER ===== */
+/* CONTAINER (FIX WIDTH) */
 .container{
-  width:95%;
-  max-width:1200px;
+  width:1200px;
   margin:25px auto;
 }
 
-/* ===== CARD ===== */
+/* CARD */
 .card{
   background:#fff;
   border-radius:12px;
   padding:20px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
-  margin-bottom:25px;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  margin-bottom:20px;
 }
 
-.card h2{
-  margin-top:0;
-  color:#2e7d32;
+.card h2{margin-top:0;color:#2e7d32}
+
+/* SEARCH */
+.search-box{
+  margin-bottom:12px;
 }
 
-/* ===== FORM ===== */
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:12px;
-}
-
-input{
+.search-box input{
+  width:100%;
   padding:10px;
-  border:1px solid #ccc;
   border-radius:6px;
+  border:1px solid #ccc;
 }
 
-button{
-  margin-top:15px;
-  padding:12px;
-  background:#2e7d32;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-button:hover{
-  background:#1b5e20;
-}
-
-.print-area{
+/* ACTION */
+.action{
   display:flex;
   justify-content:flex-end;
+  gap:10px;
   margin-bottom:10px;
 }
 
-.print-btn{
-  padding:10px 16px;
+button{
+  padding:10px 18px;
   background:#2e7d32;
   color:#fff;
   border:none;
@@ -99,7 +79,11 @@ button:hover{
   cursor:pointer;
 }
 
-/* ===== TABLE ===== */
+/* TABLE */
+.table-wrap{
+  overflow-x:auto;
+}
+
 table{
   width:100%;
   border-collapse:collapse;
@@ -108,7 +92,7 @@ table{
 
 th,td{
   border:1px solid #ccc;
-  padding:8px;
+  padding:9px;
 }
 
 th{
@@ -116,61 +100,59 @@ th{
   text-align:center;
 }
 
+/* ROW MARKER */
+tbody tr{
+  border-left:6px solid transparent;
+  transition:.15s;
+}
+
+tbody tr:nth-child(even){
+  background:#f9fdf9;
+}
+
+tbody tr:hover{
+  background:#e8f5e9;
+  border-left:6px solid #2e7d32;
+}
+
 td.harga{
   text-align:right;
   font-weight:bold;
 }
 
-/* ===== FOOTER ===== */
+/* FOOTER */
 footer{
   text-align:center;
-  padding:15px;
   font-size:13px;
   color:#777;
+  padding:15px;
 }
 
-/* ===== PRINT MODE ===== */
+/* PRINT */
 @media print{
-
   @page{
-    size:A4 portrait;
+    size:A4 landscape;
     margin:12mm;
   }
 
-  body{
-    background:#fff;
-  }
-
   header,
-  .form-card,
-  footer,
-  .print-area{
+  .search-box,
+  .action,
+  footer{
     display:none !important;
   }
 
+  .container{
+    width:100%;
+  }
+
   .card{
-    box-shadow:none !important;
+    box-shadow:none;
     padding:0;
-    margin:0;
   }
 
-  table{
-    font-size:11px;
-  }
-
-  th,td{
-    border:1px solid #000 !important;
-    padding:6px;
-  }
-
-  th{
-    background:#fff !important;
-    font-weight:bold;
-  }
-
-  tr{
-    page-break-inside:avoid;
-  }
+  table{font-size:11px}
+  th,td{border:1px solid #000}
 }
 </style>
 </head>
@@ -178,97 +160,95 @@ footer{
 <body>
 
 <header>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Logo_placeholder.png">
+  
   <h1>Harga Jual Produk — CV Mestika Lestari</h1>
 </header>
 
 <div class="container">
 
-  <!-- FORM INPUT (TIDAK IKUT PRINT) -->
-  <div class="card form-card">
-    <h2>Input Harga Jual</h2>
-    <div class="form-grid">
-      <input id="kode" placeholder="Kode Barang">
-      <input id="nama" placeholder="Nama Barang">
-      <input id="kemasan" placeholder="Jenis Kemasan">
-      <input id="harga" type="number" placeholder="Harga Jual">
-      <input id="satuan" placeholder="Satuan">
-    </div>
-    <button onclick="simpanData()">💾 Simpan Harga</button>
-    <div id="info"></div>
-  </div>
-
-  <!-- TABEL DATA (IKUT PRINT) -->
   <div class="card">
-    <div class="print-area">
-      <button class="print-btn" onclick="window.print()">🖨️ Print Disini</button>
+    <h2>Daftar Harga Jual</h2>
+
+    <!-- SEARCH -->
+    <div class="search-box">
+      <input id="searchInput" placeholder="Cari kode, nama barang, kemasan..." onkeyup="filterData()">
     </div>
 
-    <h2>Daftar Harga Jual</h2>
-    <table>
-      <thead id="thead"></thead>
-      <tbody id="tbody"></tbody>
-    </table>
+    <!-- ACTION -->
+    <div class="action">
+      <button onclick="window.print()">🖨 Print</button>
+      <button onclick="exportPDF()">📄 PDF</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
   </div>
 
 </div>
 
-<footer>
-  © CV Mestika Lestari
-</footer>
+<footer>© CV Mestika Lestari</footer>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwQE7aNWjMTygxHXwvrrYBPINKDBDSqX0O4GsIe3X1ZaprVC4qX-lmdrUpcW91nbLKu/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbwQE7aNWjMTygxHXwvrrYBPINKDBDSqX0O4GsIe3X1ZaprVC4qX-lmdrUpcW91nbLKu/exec";
+let dataHarga=[];
 
-/* LOAD DATA */
+/* HELPER */
+function rupiah(n){
+  if(!n) return "";
+  return "Rp "+Number(n).toLocaleString("id-ID");
+}
+
+/* LOAD */
 async function loadData(){
-  const res = await fetch(API_URL);
-  const data = await res.json();
+  const res=await fetch(API_URL);
+  dataHarga=await res.json();
+  render(dataHarga);
+}
 
+/* RENDER */
+function render(data){
   if(!data.length){
-    tbody.innerHTML = "<tr><td colspan='6' align='center'>Belum ada data</td></tr>";
+    tbody.innerHTML="<tr><td align='center'>Belum ada data</td></tr>";
     return;
   }
 
-  const headers = Object.keys(data[0]);
-  thead.innerHTML = "<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr>";
+  const headers=Object.keys(data[0]);
+  thead.innerHTML="<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr>";
 
-  tbody.innerHTML = data.map(r=>{
+  tbody.innerHTML=data.map(r=>{
     return "<tr>"+headers.map(h=>{
-      if(h.toLowerCase().includes("harga")){
-        return `<td class="harga">Rp ${Number(r[h]).toLocaleString("id-ID")}</td>`;
-      }
+      if(h.toLowerCase().includes("harga"))
+        return `<td class="harga">${rupiah(r[h])}</td>`;
       return `<td>${r[h] ?? ""}</td>`;
     }).join("")+"</tr>";
   }).join("");
 }
 
-/* SIMPAN */
-async function simpanData(){
-  const payload = {
-    "KODE BARANG": kode.value,
-    "NAMA BARANG": nama.value,
-    "JENIS KEMASAN": kemasan.value,
-    "HARGA JUAL": harga.value,
-    "SATUAN": satuan.value
-  };
+/* SEARCH */
+function filterData(){
+  const k=searchInput.value.toLowerCase();
+  render(
+    dataHarga.filter(r=>
+      Object.values(r).join(" ").toLowerCase().includes(k)
+    )
+  );
+}
 
-  info.innerText="Menyimpan...";
-
-  const res = await fetch(API_URL,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify(payload)
-  });
-
-  const r = await res.json();
-  if(r.status==="success"){
-    info.innerText="✅ Data tersimpan";
-    kode.value=nama.value=kemasan.value=harga.value=satuan.value="";
-    loadData();
-  }else{
-    info.innerText="❌ Gagal simpan";
-  }
+/* PDF LANDSCAPE */
+async function exportPDF(){
+  const {jsPDF}=window.jspdf;
+  const canvas=await html2canvas(document.body,{scale:2});
+  const img=canvas.toDataURL("image/png");
+  const pdf=new jsPDF("landscape","mm","a4");
+  const w=pdf.internal.pageSize.getWidth();
+  const h=canvas.height*w/canvas.width;
+  pdf.addImage(img,"PNG",0,10,w,h);
+  pdf.save("Harga_Jual_CV_Mestika_Lestari.pdf");
 }
 
 loadData();
