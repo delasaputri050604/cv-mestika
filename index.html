@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- 🔒 VIEWPORT DIKUNCI -->
-<meta name="viewport" content="width=1200, initial-scale=0.35, maximum-scale=1.0, user-scalable=yes">
+<!-- ✅ RESPONSIVE SHOPEE STYLE -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Dashboard — CV Mestika Lestari</title>
 
@@ -17,7 +17,6 @@
 body{
   margin:0;
   background:#f1f8f4;
-  min-width:1200px;
 }
 
 /* ===== HEADER ===== */
@@ -27,7 +26,7 @@ body{
   color:white;
   display:flex;
   align-items:center;
-  padding:0 25px;
+  padding:0 18px;
 }
 
 .header h1{
@@ -38,21 +37,19 @@ body{
 /* ===== LAYOUT ===== */
 .wrapper{
   display:flex;
-  height:calc(100vh - 60px);
-  min-width:1200px;
+  min-height:calc(100vh - 60px);
 }
 
 /* ===== SIDEBAR ===== */
 .sidebar{
-  width:240px;
+  width:230px;
   background:#2e7d32;
   color:white;
-  flex-shrink:0;
 }
 
 .sidebar a{
   display:block;
-  padding:14px 22px;
+  padding:14px 20px;
   font-size:14px;
   color:#e8f5e9;
   text-decoration:none;
@@ -71,9 +68,8 @@ body{
 /* ===== CONTENT ===== */
 .content{
   flex:1;
-  padding:22px;
+  padding:18px;
   background:#f9fbfa;
-  overflow:auto;
 }
 
 /* ===== DASHBOARD ===== */
@@ -84,23 +80,23 @@ body{
 /* STAT CARD */
 .dashboard{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:20px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
 }
 
 .stat-card{
   background:white;
   border-radius:14px;
-  padding:20px;
+  padding:18px;
   display:flex;
   align-items:center;
-  gap:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  gap:14px;
+  box-shadow:0 6px 15px rgba(0,0,0,.08);
 }
 
 .stat-icon{
-  width:56px;
-  height:56px;
+  width:54px;
+  height:54px;
   border-radius:14px;
   display:flex;
   align-items:center;
@@ -116,7 +112,7 @@ body{
 
 .stat-info h3{
   margin:0;
-  font-size:20px;
+  font-size:18px;
   color:#1b5e20;
 }
 
@@ -127,19 +123,19 @@ body{
 
 /* QUICK MENU */
 .quick-menu{
-  margin-top:30px;
+  margin-top:22px;
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:18px;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:14px;
 }
 
 .quick-item{
   background:white;
   border-radius:12px;
-  padding:18px;
+  padding:16px;
   text-align:center;
   cursor:pointer;
-  box-shadow:0 6px 15px rgba(0,0,0,.08);
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
   transition:.2s;
 }
 
@@ -149,7 +145,7 @@ body{
 }
 
 .quick-item div{
-  font-size:28px;
+  font-size:26px;
 }
 
 .quick-item span{
@@ -163,7 +159,7 @@ body{
 /* ===== IFRAME ===== */
 iframe{
   width:100%;
-  height:calc(100vh - 120px);
+  height:calc(100vh - 140px);
   border:none;
   display:none;
   background:white;
@@ -177,13 +173,34 @@ iframe{
   margin-top:12px;
 }
 
+/* ===== MOBILE MODE (SHOPEE STYLE) ===== */
+@media (max-width:768px){
+
+  .sidebar{
+    display:none;
+  }
+
+  .content{
+    padding:14px;
+  }
+
+  .header h1{
+    font-size:16px;
+  }
+
+  .stat-card{
+    padding:16px;
+  }
+
+  .stat-info h3{
+    font-size:17px;
+  }
+}
+
 /* ===== PRINT ===== */
 @media print{
   .sidebar,.header,.footer{
     display:none!important;
-  }
-  body{
-    background:white;
   }
 }
 </style>
@@ -197,6 +214,7 @@ iframe{
 
 <div class="wrapper">
 
+  <!-- SIDEBAR (AUTO HILANG DI HP) -->
   <div class="sidebar">
     <a class="active" onclick="showDashboard(this)">🏠 Dashboard</a>
     <a onclick="loadPage(this,'master_barang.html')">📚 Master Barang</a>
@@ -210,6 +228,7 @@ iframe{
     <a onclick="loadPage(this,'Po_google.html')">📑 Purchase Order</a>
   </div>
 
+  <!-- CONTENT -->
   <div class="content">
 
     <div id="dashboard">
@@ -272,9 +291,13 @@ iframe{
 </div>
 
 <script>
+const dashboard = document.getElementById("dashboard");
+const frame = document.getElementById("frame");
+
 function resetMenu(el){
-  document.querySelectorAll(".sidebar a").forEach(a=>a.classList.remove("active"));
-  el.classList.add("active");
+  document.querySelectorAll(".sidebar a")
+    .forEach(a=>a.classList.remove("active"));
+  if(el) el.classList.add("active");
 }
 
 function showDashboard(el){
