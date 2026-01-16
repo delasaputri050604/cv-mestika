@@ -27,6 +27,7 @@ body{
   display:flex;
   align-items:center;
   padding:0 18px;
+  justify-content: space-between;
 }
 
 .header h1{
@@ -165,6 +166,18 @@ iframe{
   background:white;
 }
 
+/* ===== KEMBALI DASHBOARD BUTTON (HP) ===== */
+#backDashboard{
+  display:none;
+  background:#1b5e20;
+  color:white;
+  border:none;
+  padding:10px 14px;
+  margin-bottom:12px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
 /* ===== FOOTER ===== */
 .footer{
   text-align:center;
@@ -195,11 +208,16 @@ iframe{
   .stat-info h3{
     font-size:17px;
   }
+
+  /* Tampilkan tombol kembali ke dashboard */
+  #backDashboard{
+    display:block;
+  }
 }
 
 /* ===== PRINT ===== */
 @media print{
-  .sidebar,.header,.footer{
+  .sidebar,.header,.footer,#backDashboard{
     display:none!important;
   }
 }
@@ -225,11 +243,15 @@ iframe{
 
     <a onclick="loadPage(this,'invoice.html')">🧾 Invoice</a>
     <a onclick="loadPage(this,'spb.html')">📦 SPB</a>
-    <a onclick="loadPage(this,'Po_google.html')">📑 Purchase Order</a>
+    <a onclick="loadPage(this,'po_google.html')">📑 Purchase Order</a>
+    <a onclick="loadPage(this,'jatem.html')">📝 Jatuh Tempo</a> <!-- dari gambar -->
   </div>
 
   <!-- CONTENT -->
   <div class="content">
+
+    <!-- tombol kembali dashboard untuk HP -->
+    <button id="backDashboard" onclick="showDashboard()">← Kembali ke Dashboard</button>
 
     <div id="dashboard">
 
@@ -265,6 +287,14 @@ iframe{
             <span>Pembelian</span>
           </div>
         </div>
+
+        <div class="stat-card">
+          <div class="stat-icon bg-purple">📝</div>
+          <div class="stat-info">
+            <h3>Jatuh Tempo</h3>
+            <span>Tagihan & PO</span>
+          </div>
+        </div>
       </div>
 
       <div class="quick-menu">
@@ -274,11 +304,14 @@ iframe{
         <div class="quick-item" onclick="loadPage(this,'spb.html')">
           <div>📦</div><span>SPB</span>
         </div>
-        <div class="quick-item" onclick="loadPage(this,'Po_google.html')">
+        <div class="quick-item" onclick="loadPage(this,'po_google.html')">
           <div>📑</div><span>Purchase Order</span>
         </div>
         <div class="quick-item" onclick="loadPage(this,'master_barang.html')">
           <div>📚</div><span>Master Barang</span>
+        </div>
+        <div class="quick-item" onclick="loadPage(this,'jatem.html')">
+          <div>📝</div><span>Jatuh Tempo</span>
         </div>
       </div>
 
