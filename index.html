@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- ✅ RESPONSIVE SHOPEE STYLE -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Dashboard — CV Mestika Lestari</title>
 
 <style>
+
 *{
   box-sizing:border-box;
   font-family:"Segoe UI",Arial,sans-serif;
@@ -19,15 +19,72 @@ body{
   background:#f1f8f4;
 }
 
-/* ===== HEADER ===== */
+/* ================= LOGIN ================= */
+
+.login-page{
+  width:100%;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#e8f5e9;
+}
+
+.login-box{
+  width:340px;
+  background:white;
+  padding:30px;
+  border-radius:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,.1);
+}
+
+.login-box h2{
+  text-align:center;
+  color:#1b5e20;
+  margin-bottom:25px;
+}
+
+.login-box input{
+  width:100%;
+  padding:13px;
+  margin-bottom:15px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  font-size:14px;
+}
+
+.login-box button{
+  width:100%;
+  padding:13px;
+  background:#1b5e20;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
+}
+
+.login-box button:hover{
+  background:#145a1f;
+}
+
+#error{
+  color:red;
+  font-size:13px;
+  text-align:center;
+  margin-top:10px;
+}
+
+/* ================= HEADER ================= */
+
 .header{
   height:60px;
   background:#1b5e20;
   color:white;
   display:flex;
   align-items:center;
+  justify-content:space-between;
   padding:0 18px;
-  justify-content: space-between;
 }
 
 .header h1{
@@ -35,24 +92,34 @@ body{
   margin:0;
 }
 
-/* ===== LAYOUT ===== */
+.logout-btn{
+  background:white;
+  color:#1b5e20;
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* ================= LAYOUT ================= */
+
 .wrapper{
   display:flex;
   min-height:calc(100vh - 60px);
 }
 
-/* ===== SIDEBAR ===== */
+/* ================= SIDEBAR ================= */
+
 .sidebar{
   width:230px;
   background:#2e7d32;
-  color:white;
 }
 
 .sidebar a{
   display:block;
   padding:14px 20px;
-  font-size:14px;
-  color:#e8f5e9;
+  color:white;
   text-decoration:none;
   cursor:pointer;
 }
@@ -66,63 +133,42 @@ body{
   font-weight:bold;
 }
 
-/* ===== CONTENT ===== */
+/* ================= CONTENT ================= */
+
 .content{
   flex:1;
-  padding:18px;
+  padding:20px;
   background:#f9fbfa;
 }
 
-/* ===== DASHBOARD ===== */
-#dashboard{
-  display:block;
-}
+/* ================= DASHBOARD ================= */
 
-/* STAT CARD */
 .dashboard{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:16px;
 }
 
-.stat-card{
+.card{
   background:white;
   border-radius:14px;
-  padding:18px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  box-shadow:0 6px 15px rgba(0,0,0,.08);
+  padding:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
-.stat-icon{
-  width:54px;
-  height:54px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:26px;
-  color:white;
-}
-
-.bg-green{background:#2e7d32}
-.bg-blue{background:#1565c0}
-.bg-orange{background:#ef6c00}
-.bg-purple{background:#6a1b9a}
-
-.stat-info h3{
+.card h3{
   margin:0;
-  font-size:18px;
   color:#1b5e20;
 }
 
-.stat-info span{
-  font-size:13px;
+.card p{
+  margin-top:8px;
   color:#555;
+  font-size:14px;
 }
 
-/* QUICK MENU */
+/* ================= QUICK MENU ================= */
+
 .quick-menu{
   margin-top:22px;
   display:grid;
@@ -157,7 +203,8 @@ body{
   color:#1b5e20;
 }
 
-/* ===== IFRAME ===== */
+/* ================= IFRAME ================= */
+
 iframe{
   width:100%;
   height:calc(100vh - 140px);
@@ -166,28 +213,18 @@ iframe{
   background:white;
 }
 
-/* ===== KEMBALI DASHBOARD BUTTON (HP) ===== */
-#backDashboard{
-  display:none;
-  background:#1b5e20;
-  color:white;
-  border:none;
-  padding:10px 14px;
-  margin-bottom:12px;
-  border-radius:8px;
-  cursor:pointer;
-}
+/* ================= FOOTER ================= */
 
-/* ===== FOOTER ===== */
 .footer{
   text-align:center;
+  margin-top:18px;
   font-size:12px;
-  color:#4b5563;
-  margin-top:12px;
+  color:#666;
 }
 
-/* ===== MOBILE MODE (SHOPEE STYLE) ===== */
-@media (max-width:768px){
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
 
   .sidebar{
     display:none;
@@ -198,153 +235,238 @@ iframe{
   }
 
   .header h1{
-    font-size:16px;
+    font-size:15px;
   }
 
-  .stat-card{
-    padding:16px;
-  }
-
-  .stat-info h3{
-    font-size:17px;
-  }
-
-  /* Tampilkan tombol kembali ke dashboard */
-  #backDashboard{
-    display:block;
-  }
 }
 
-/* ===== PRINT ===== */
-@media print{
-  .sidebar,.header,.footer,#backDashboard{
-    display:none!important;
-  }
-}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>CV Mestika Lestari — Sistem Administrasi</h1>
-</div>
+<!-- ================= LOGIN PAGE ================= -->
 
-<div class="wrapper">
+<div class="login-page" id="loginPage">
 
-  <!-- SIDEBAR (AUTO HILANG DI HP) -->
-  <div class="sidebar">
-    <a class="active" onclick="showDashboard(this)">🏠 Dashboard</a>
-    <a onclick="loadPage(this,'master_barang.html')">📚 Master Barang</a>
-    <a onclick="loadPage(this,'harga_beli.html')">📥 Harga Beli</a>
-    <a onclick="loadPage(this,'harga_jual.html')">📤 Harga Jual</a>
+  <div class="login-box">
 
-    <hr style="border:0;border-top:1px solid rgba(255,255,255,.2);margin:10px">
+    <h2>Login Sistem</h2>
 
-    <a onclick="loadPage(this,'invoice.html')">🧾 Invoice</a>
-    <a onclick="loadPage(this,'spb.html')">📦 SPB</a>
-    <a onclick="loadPage(this,'po_google.html')">📑 Purchase Order</a>
-    <a onclick="loadPage(this,'jatem.html')">📝 Jatuh Tempo</a> <!-- dari gambar -->
+    <input type="email" id="email" placeholder="Masukkan Email">
+
+    <input type="password" id="password" placeholder="Masukkan Password">
+
+    <button onclick="login()">Masuk</button>
+
+    <div id="error"></div>
+
   </div>
 
-  <!-- CONTENT -->
-  <div class="content">
+</div>
 
-    <!-- tombol kembali dashboard untuk HP -->
-    <button id="backDashboard" onclick="showDashboard()">← Kembali ke Dashboard</button>
+<!-- ================= MAIN APP ================= -->
 
-    <div id="dashboard">
+<div id="mainApp" style="display:none;">
 
-      <div class="dashboard">
-        <div class="stat-card">
-          <div class="stat-icon bg-green">📊</div>
-          <div class="stat-info">
-            <h3>Sistem Aktif</h3>
-            <span>Terhubung Google Sheet</span>
+  <!-- HEADER -->
+  <div class="header">
+
+    <h1>CV Mestika Lestari — Sistem Administrasi</h1>
+
+    <button class="logout-btn" onclick="logout()">Logout</button>
+
+  </div>
+
+  <div class="wrapper">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <a class="active" onclick="showDashboard(this)">🏠 Dashboard</a>
+
+      <a onclick="loadPage(this,'master_barang.html')">📚 Master Barang</a>
+
+      <a onclick="loadPage(this,'harga_beli.html')">📥 Harga Beli</a>
+
+      <a onclick="loadPage(this,'harga_jual.html')">📤 Harga Jual</a>
+
+      <a onclick="loadPage(this,'invoice.html')">🧾 Invoice</a>
+
+      <a onclick="loadPage(this,'spb.html')">📦 SPB</a>
+
+      <a onclick="loadPage(this,'po_google.html')">📑 Purchase Order</a>
+
+      <a onclick="loadPage(this,'jatem.html')">📝 Jatuh Tempo</a>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="dashboard">
+
+        <div class="dashboard">
+
+          <div class="card">
+            <h3>📊 Sistem Aktif</h3>
+            <p>Terhubung Google Sheet</p>
           </div>
+
+          <div class="card">
+            <h3>🧾 Invoice</h3>
+            <p>Cetak & PDF</p>
+          </div>
+
+          <div class="card">
+            <h3>📦 SPB</h3>
+            <p>Distribusi Barang</p>
+          </div>
+
+          <div class="card">
+            <h3>📑 Purchase Order</h3>
+            <p>Pembelian Barang</p>
+          </div>
+
+          <div class="card">
+            <h3>📝 Jatuh Tempo</h3>
+            <p>Tagihan & PO</p>
+          </div>
+
         </div>
 
-        <div class="stat-card">
-          <div class="stat-icon bg-blue">🧾</div>
-          <div class="stat-info">
-            <h3>Invoice</h3>
-            <span>Cetak & PDF</span>
+        <!-- QUICK MENU -->
+        <div class="quick-menu">
+
+          <div class="quick-item" onclick="loadPage(this,'invoice.html')">
+            <div>🧾</div>
+            <span>Invoice</span>
           </div>
+
+          <div class="quick-item" onclick="loadPage(this,'spb.html')">
+            <div>📦</div>
+            <span>SPB</span>
+          </div>
+
+          <div class="quick-item" onclick="loadPage(this,'po_google.html')">
+            <div>📑</div>
+            <span>Purchase Order</span>
+          </div>
+
+          <div class="quick-item" onclick="loadPage(this,'master_barang.html')">
+            <div>📚</div>
+            <span>Master Barang</span>
+          </div>
+
+          <div class="quick-item" onclick="loadPage(this,'jatem.html')">
+            <div>📝</div>
+            <span>Jatuh Tempo</span>
+          </div>
+
         </div>
 
-        <div class="stat-card">
-          <div class="stat-icon bg-orange">📦</div>
-          <div class="stat-info">
-            <h3>SPB</h3>
-            <span>Distribusi Barang</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon bg-purple">📑</div>
-          <div class="stat-info">
-            <h3>Purchase Order</h3>
-            <span>Pembelian</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon bg-purple">📝</div>
-          <div class="stat-info">
-            <h3>Jatuh Tempo</h3>
-            <span>Tagihan & PO</span>
-          </div>
-        </div>
       </div>
 
-      <div class="quick-menu">
-        <div class="quick-item" onclick="loadPage(this,'invoice.html')">
-          <div>🧾</div><span>Invoice</span>
-        </div>
-        <div class="quick-item" onclick="loadPage(this,'spb.html')">
-          <div>📦</div><span>SPB</span>
-        </div>
-        <div class="quick-item" onclick="loadPage(this,'po_google.html')">
-          <div>📑</div><span>Purchase Order</span>
-        </div>
-        <div class="quick-item" onclick="loadPage(this,'master_barang.html')">
-          <div>📚</div><span>Master Barang</span>
-        </div>
-        <div class="quick-item" onclick="loadPage(this,'jatem.html')">
-          <div>📝</div><span>Jatuh Tempo</span>
-        </div>
+      <!-- IFRAME -->
+      <iframe id="frame"></iframe>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        © CV Mestika Lestari
       </div>
 
     </div>
 
-    <iframe id="frame"></iframe>
-
-    <div class="footer">© CV Mestika Lestari</div>
   </div>
+
 </div>
 
 <script>
+
+/* ================= DASHBOARD ================= */
+
 const dashboard = document.getElementById("dashboard");
 const frame = document.getElementById("frame");
 
 function resetMenu(el){
+
   document.querySelectorAll(".sidebar a")
-    .forEach(a=>a.classList.remove("active"));
-  if(el) el.classList.add("active");
+  .forEach(a=>a.classList.remove("active"));
+
+  if(el){
+    el.classList.add("active");
+  }
+
 }
 
 function showDashboard(el){
+
   resetMenu(el);
+
   dashboard.style.display="block";
   frame.style.display="none";
+
 }
 
 function loadPage(el,page){
+
   resetMenu(el);
+
   dashboard.style.display="none";
   frame.style.display="block";
-  frame.src=page;
+
+  frame.src = page;
+
 }
+
+/* ================= LOGIN ================= */
+
+function login(){
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const error = document.getElementById("error");
+
+  const validEmail = "cvmestikalestari@gmail.com";
+  const validPassword = "MESTIKALESTARI";
+
+  if(email === "" || password === ""){
+
+    error.innerHTML = "Email dan password wajib diisi!";
+    return;
+
+  }
+
+  if(email === validEmail && password === validPassword){
+
+    document.getElementById("loginPage").style.display = "none";
+
+    document.getElementById("mainApp").style.display = "block";
+
+  }else{
+
+    error.innerHTML = "Email atau password salah!";
+
+  }
+
+}
+
+/* ================= LOGOUT ================= */
+
+function logout(){
+
+  document.getElementById("mainApp").style.display = "none";
+
+  document.getElementById("loginPage").style.display = "flex";
+
+  document.getElementById("email").value = "";
+
+  document.getElementById("password").value = "";
+
+}
+
 </script>
 
 </body>
